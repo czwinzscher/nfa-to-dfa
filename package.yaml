@@ -1,0 +1,45 @@
+name:                nfa-to-dfa
+version:             0.1.0.0
+github:              "czwinzscher/nfa-to-dfa"
+license:             MIT
+author:              "Clemens Zwinzscher"
+maintainer:          "example@example.com"
+copyright:           "2019 Clemens Zwinzscher"
+
+extra-source-files:
+- README.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+description:         Please see the README on GitHub at <https://github.com/czwinzscher/nfa-to-dfa#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- containers
+
+library:
+  source-dirs: src
+
+executables:
+  nfa-to-dfa-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - nfa-to-dfa
+
+tests:
+  nfa-to-dfa-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - nfa-to-dfa
