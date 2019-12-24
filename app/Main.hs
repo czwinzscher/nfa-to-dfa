@@ -2,7 +2,7 @@ module Main where
 
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
-import Lib
+import NfaToDfa
 
 main :: IO ()
 main = do
