@@ -4,7 +4,6 @@ module Lib
   , nfaToDfa
   ) where
 
-import Control.Monad (forM)
 import Data.Bifunctor (bimap)
 import qualified Data.Map.Strict as Map
 import Data.Maybe (fromJust)
