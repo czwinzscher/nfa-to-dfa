@@ -1,5 +1,5 @@
 module NfaToDfa.Internal
-  ( dfaDeltaForState
+  ( dfaDeltaForCharAndState
   , dfaDeltaForChar
   , dfaDelta
   ) where
@@ -8,28 +8,29 @@ import qualified Data.Map.Strict as Map
 import Data.Maybe (fromJust)
 import qualified Data.Set as Set
 
-dfaDeltaForState :: Map.Map Int (Set.Set Int) -> Set.Set Int -> Set.Set Int
-dfaDeltaForState nfaCharMap state =
-  Set.fromList $
-  foldr
-    (\s -> (++) (Set.toList (fromJust $ Map.lookup s nfaCharMap)))
-    []
-    (Set.toList state)
+dfaDeltaForCharAndState ::
+     Map.Map Int (Set.Set Int) -- ^ The transition map for the char in the NFA
+  -> Set.Set Int -- ^ A state from the DFA
+  -> Set.Set Int -- ^ The next state in the DFA
+dfaDeltaForCharAndState nfaCharMap =
+  Set.foldr (\s -> Set.union (fromJust $ Map.lookup s nfaCharMap)) Set.empty
 
 dfaDeltaForChar ::
-     Map.Map Int (Set.Set Int) -> [Set.Set Int] -> [(Set.Set Int, Set.Set Int)]
+     Map.Map Int (Set.Set Int) -- ^ The transition map for the char in the NFA
+  -> [Set.Set Int] -- ^ All states of the DFA
+  -> [(Set.Set Int, Set.Set Int)] -- ^ The transitions in the DFA for the char
 dfaDeltaForChar nfaCharMap =
-  foldr (\x -> (++) [(x, dfaDeltaForState nfaCharMap x)]) []
+  foldr (\x -> (++) [(x, dfaDeltaForCharAndState nfaCharMap x)]) []
 
 dfaDelta ::
-     Map.Map Char (Map.Map Int (Set.Set Int))
-  -> Set.Set Char
-  -> Set.Set (Set.Set Int)
-  -> Map.Map Char (Map.Map (Set.Set Int) (Set.Set Int))
+     Map.Map Char (Map.Map Int (Set.Set Int)) -- ^ The NFA transition map
+  -> Set.Set Char -- ^ The NFA alphabet
+  -> Set.Set (Set.Set Int) -- ^ The DFA states
+  -> Map.Map Char (Map.Map (Set.Set Int) (Set.Set Int)) -- ^ The DFA transition map
 dfaDelta nfaMap alphabet newStates = Map.fromList res
   where
     res =
-      foldr
+      Set.foldr
         (\a ->
            (++)
              [ ( a
@@ -39,4 +40,4 @@ dfaDelta nfaMap alphabet newStates = Map.fromList res
                    (Set.toList newStates))
              ])
         []
-        (Set.toList alphabet)
+        alphabet

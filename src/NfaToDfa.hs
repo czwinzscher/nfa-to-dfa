@@ -29,6 +29,7 @@ data DFA =
     }
   deriving (Show)
 
+-- | The 'nfaToDfa' function converts a NFA to a DFA using the powerset construction.
 nfaToDfa :: NFA -> DFA
 nfaToDfa nfa =
   DFA
