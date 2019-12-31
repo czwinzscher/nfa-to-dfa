@@ -40,13 +40,14 @@ nfaToDfa NFA {nStates, nAlphabet, nDelta, nStart, nFinal} =
     , dDelta =
         Map.map
           (Map.fromList . map (bimap renameState renameState) . Map.toList)
-          newDelta
+          (dfaDelta nDelta nAlphabet newStates)
     , dStart = renameState nStart
-    , dFinal = Set.map renameState newFinalStates
+    , dFinal =
+        Set.map
+          renameState
+          (Set.fromList
+             [x | x <- Set.toList newStates, not $ Set.disjoint nFinal x])
     }
   where
     newStates = Set.powerSet nStates
-    newDelta = dfaDelta nDelta nAlphabet newStates
-    newFinalStates =
-      Set.fromList [x | x <- Set.toList newStates, not $ Set.disjoint nFinal x]
     renameState s = Set.findIndex s newStates
