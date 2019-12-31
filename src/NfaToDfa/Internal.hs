@@ -5,7 +5,7 @@ module NfaToDfa.Internal
   ) where
 
 import qualified Data.Map.Strict as Map
-import Data.Maybe (fromJust)
+import Data.Maybe (fromMaybe)
 import qualified Data.Set as Set
 
 dfaDeltaForCharAndState ::
@@ -13,7 +13,7 @@ dfaDeltaForCharAndState ::
   -> Set.Set Int -- ^ A state from the DFA
   -> Set.Set Int -- ^ The next state in the DFA
 dfaDeltaForCharAndState nfaCharMap =
-  Set.foldr (\s -> Set.union (fromJust $ Map.lookup s nfaCharMap)) Set.empty
+  Set.foldr (\s -> Set.union (fromMaybe Set.empty (Map.lookup s nfaCharMap))) Set.empty
 
 dfaDeltaForChar ::
      Map.Map Int (Set.Set Int) -- ^ The transition map for the char in the NFA
@@ -36,7 +36,7 @@ dfaDelta nfaMap alphabet newStates = Map.fromList res
              [ ( a
                , Map.fromList $
                  dfaDeltaForChar
-                   (fromJust $ Map.lookup a nfaMap)
+                   (fromMaybe Map.empty (Map.lookup a nfaMap))
                    (Set.toList newStates))
              ])
         []

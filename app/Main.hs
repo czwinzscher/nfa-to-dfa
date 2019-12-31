@@ -14,13 +14,12 @@ main = do
               Map.fromList
                 [ ( 'a'
                   , Map.fromList
-                      [ (0, Set.fromList [1])
-                      , (1, Set.fromList [1])
-                      , (2, Set.empty)
+                      [ (0, Set.fromList [2])
+                      , (1, Set.fromList [2])
                       ])
                 , ( 'b'
                   , Map.fromList
-                      [(0, Set.empty), (1, Set.fromList [1, 2]), (2, Set.empty)])
+                      [(1, Set.fromList [1, 2])])
                 ]
           , nStart = Set.fromList [0]
           , nFinal = Set.fromList [2]
