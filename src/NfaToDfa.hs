@@ -19,7 +19,7 @@ data NFA =
     , nStart :: Set.Set Int
     , nFinal :: Set.Set Int
     }
-  deriving (Show)
+  deriving (Show, Eq)
 
 data DFA =
   DFA
@@ -29,7 +29,7 @@ data DFA =
     , dStart :: Int
     , dFinal :: Set.Set Int
     }
-  deriving (Show)
+  deriving (Show, Eq)
 
 -- | The 'nfaToDfa' function converts a NFA to a DFA using the powerset construction.
 nfaToDfa :: NFA -> DFA
