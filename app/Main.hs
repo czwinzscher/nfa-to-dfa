@@ -14,15 +14,11 @@ main = do
               Map.fromList
                 [ ( 'a'
                   , Map.fromList
-                      [ (0, Set.fromList [2])
-                      , (1, Set.fromList [2])
-                      ])
-                , ( 'b'
-                  , Map.fromList
-                      [(1, Set.fromList [1, 2])])
+                      [(0, Set.fromList [1, 2]), (1, Set.fromList [2])])
+                , ('b', Map.fromList [(1, Set.fromList [1, 2])])
                 ]
           , nStart = Set.fromList [0]
           , nFinal = Set.fromList [2]
           }
-  let dfa = nfaToDfa nfa
+  let dfa = removeUnreachable $ nfaToDfa nfa
   print dfa

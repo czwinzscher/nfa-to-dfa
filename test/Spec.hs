@@ -14,9 +14,12 @@ tests :: TestTree
 tests = testGroup "Tests" [unitTests]
 
 unitTests :: TestTree
-unitTests =
+unitTests = testGroup "UnitTests" [conversionUnitTests, minimizationUnitTests]
+
+conversionUnitTests :: TestTree
+conversionUnitTests =
   testGroup
-    "UnitTests"
+    "nfaToDfaUnitTests"
     [ testCase "empty nfa" $ do
         let nfa =
               NFA
@@ -35,7 +38,7 @@ unitTests =
                 , dFinal = Set.empty
                 }
             actual = nfaToDfa nfa
-        actual @?= expected
+        expected @?= actual
     , testCase "nfa with 3 states" $ do
         let nfa =
               NFA
@@ -84,5 +87,58 @@ unitTests =
                 , dFinal = Set.fromList [3, 4, 6, 7]
                 }
             actual = nfaToDfa nfa
+        expected @?= actual
+    ]
+
+minimizationUnitTests :: TestTree
+minimizationUnitTests =
+  testGroup
+    "minimizationUnitTests"
+    [ testCase "remove unreachable states" $ do
+        let dfa =
+              DFA
+                { dStates = Set.fromList [0 .. 7]
+                , dAlphabet = Set.fromList ['a', 'b']
+                , dDelta =
+                    Map.fromList
+                      [ ( 'a'
+                        , Map.fromList
+                            [ (0, 0)
+                            , (1, 6)
+                            , (2, 6)
+                            , (3, 6)
+                            , (4, 6)
+                            , (5, 7)
+                            , (6, 7)
+                            , (7, 0)
+                            ])
+                      , ( 'b'
+                        , Map.fromList
+                            [ (0, 0)
+                            , (1, 0)
+                            , (2, 6)
+                            , (3, 6)
+                            , (4, 0)
+                            , (5, 6)
+                            , (6, 6)
+                            , (7, 0)
+                            ])
+                      ]
+                , dStart = 1
+                , dFinal = Set.fromList [3, 4, 6, 7]
+                }
+            expected =
+              DFA
+                { dStates = Set.fromList [0, 1, 6, 7]
+                , dAlphabet = Set.fromList ['a', 'b']
+                , dDelta =
+                    Map.fromList
+                      [ ('a', Map.fromList [(0, 0), (1, 6), (6, 7), (7, 0)])
+                      , ('b', Map.fromList [(0, 0), (1, 0), (6, 6), (7, 0)])
+                      ]
+                , dStart = 1
+                , dFinal = Set.fromList [6, 7]
+                }
+            actual = removeUnreachable dfa
         expected @?= actual
     ]

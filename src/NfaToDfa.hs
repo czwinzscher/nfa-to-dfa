@@ -4,10 +4,12 @@ module NfaToDfa
   ( NFA(..)
   , DFA(..)
   , nfaToDfa
+  , removeUnreachable
   ) where
 
 import Data.Bifunctor (bimap)
 import qualified Data.Map.Strict as Map
+import Data.Maybe (fromJust)
 import qualified Data.Set as Set
 import NfaToDfa.Internal
 
@@ -50,3 +52,53 @@ nfaToDfa NFA {nStates, nAlphabet, nDelta, nStart, nFinal} =
               (Set.fromList
                  [x | x <- Set.toList newStates, not $ Set.disjoint nFinal x])
         }
+
+unreachableStates :: DFA -> Set.Set Int
+unreachableStates dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} =
+  unreachableStates' dfa (Set.singleton dStart) (Set.singleton dStart)
+
+unreachableStates' :: DFA -> Set.Set Int -> Set.Set Int -> Set.Set Int
+unreachableStates' dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} reachableStates newStates
+  | Set.size newStates == 0 = Set.difference dStates reachableStates
+  | otherwise =
+    let temp =
+          Set.foldr
+            (\s ->
+               Set.union
+                 (Set.foldr
+                    (\c ->
+                       Set.insert
+                         -- TODO remove fromJust
+                         (fromJust $
+                          Map.lookup s (fromJust $ Map.lookup c dDelta)))
+                    Set.empty
+                    dAlphabet))
+            Set.empty
+            newStates
+        newNewStates = Set.difference temp reachableStates
+        newReachableStates = Set.union reachableStates newNewStates
+     in unreachableStates' dfa newReachableStates newNewStates
+
+-- | The 'removeUnreachable' function takes a DFA and returns an equivalent DFA
+--   with all unreachable states removed.
+removeUnreachable :: DFA -> DFA
+removeUnreachable dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} =
+  let unreachable = unreachableStates dfa
+   in DFA
+        { dStates = Set.difference dStates unreachable
+        , dAlphabet = dAlphabet
+        , dDelta =
+            Map.fromList $
+            foldr
+              (\(k, v) -> (++) [(k, Map.withoutKeys v unreachable)])
+              []
+              (Map.toList dDelta)
+        , dStart = dStart
+        , dFinal = Set.difference dFinal unreachable
+        }
+-- removeUnreachable' :: DFA (Set.Set Int)
+-- nondistinguishableStates :: DFA -> Set.Set Int
+-- | The 'minimize' function takes a DFA and returns an equivalent DFA
+--   with the minimum number of states
+-- minimize :: DFA -> DFA
+-- minimize dfa = removeUnreachable dfa
