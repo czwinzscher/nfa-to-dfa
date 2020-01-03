@@ -97,12 +97,7 @@ removeUnreachable dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} =
    in DFA
         { dStates = Set.difference dStates unreachable
         , dAlphabet = dAlphabet
-        , dDelta =
-            Map.fromList $
-            foldr
-              (\(k, v) -> (++) [(k, Map.withoutKeys v unreachable)])
-              []
-              (Map.toList dDelta)
+        , dDelta = Map.map (`Map.withoutKeys` unreachable) dDelta
         , dStart = dStart
         , dFinal = Set.difference dFinal unreachable
         }
