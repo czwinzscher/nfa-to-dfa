@@ -33,7 +33,8 @@ data DFA =
     }
   deriving (Show, Eq)
 
--- | The 'nfaToDfa' function converts a NFA to a DFA using the powerset construction.
+-- | The 'nfaToDfa' function converts a NFA to a DFA using the powerset
+-- construction.
 nfaToDfa :: NFA -> DFA
 nfaToDfa NFA {nStates, nAlphabet, nDelta, nStart, nFinal} =
   let newStates = Set.powerSet nStates
@@ -53,10 +54,16 @@ nfaToDfa NFA {nStates, nAlphabet, nDelta, nStart, nFinal} =
                  [x | x <- Set.toList newStates, not $ Set.disjoint nFinal x])
         }
 
+-- | The 'unreachableStates' function takes a DFA and returns a Set
+-- containing all unreachable states in the DFA.
 unreachableStates :: DFA -> Set.Set Int
 unreachableStates dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} =
   unreachableStates' dfa (Set.singleton dStart) (Set.singleton dStart)
 
+-- | The 'unreachableStates'' function takes a DFA, a Set of states that
+-- are known to be reachable and a Set of states that are known to be
+-- reachable but still need to be checked for leading to other
+-- reachable states and returns all unreachable states in the DFA.
 unreachableStates' :: DFA -> Set.Set Int -> Set.Set Int -> Set.Set Int
 unreachableStates' dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} reachableStates newStates
   | null newStates = Set.difference dStates reachableStates
@@ -83,7 +90,7 @@ unreachableStates' dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} reachabl
      in unreachableStates' dfa newReachableStates newNewStates
 
 -- | The 'removeUnreachable' function takes a DFA and returns an equivalent DFA
---   with all unreachable states removed.
+-- with all unreachable states removed.
 removeUnreachable :: DFA -> DFA
 removeUnreachable dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} =
   let unreachable = unreachableStates dfa
@@ -99,7 +106,6 @@ removeUnreachable dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} =
         , dStart = dStart
         , dFinal = Set.difference dFinal unreachable
         }
--- removeUnreachable' :: DFA (Set.Set Int)
 -- nondistinguishableStates :: DFA -> Set.Set Int
 -- | The 'minimize' function takes a DFA and returns an equivalent DFA
 --   with the minimum number of states

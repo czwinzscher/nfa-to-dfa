@@ -13,7 +13,9 @@ dfaDeltaForCharAndState ::
   -> Set.Set Int -- ^ A state from the DFA
   -> Set.Set Int -- ^ The next state in the DFA
 dfaDeltaForCharAndState nfaCharMap =
-  Set.foldr (\s -> Set.union (fromMaybe Set.empty (Map.lookup s nfaCharMap))) Set.empty
+  Set.foldr
+    (\s -> Set.union (fromMaybe Set.empty (Map.lookup s nfaCharMap)))
+    Set.empty
 
 dfaDeltaForChar ::
      Map.Map Int (Set.Set Int) -- ^ The transition map for the char in the NFA
