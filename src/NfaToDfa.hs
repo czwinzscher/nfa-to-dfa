@@ -64,6 +64,15 @@ unreachableStates dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} =
 -- are known to be reachable and a Set of states that are known to be
 -- reachable but still need to be checked for leading to other
 -- reachable states and returns all unreachable states in the DFA.
+--
+-- The algorithm in pseudocode is described here:
+-- https://en.wikipedia.org/wiki/DFA_minimization#Unreachable_states
+--
+-- If newStates is the empty set, the function will just return the
+-- states of the DFA minus the reachable states. Otherwise all states that
+-- can be reached from one of the states in newStates are computed. Those
+-- states minus reachableStates are the new newStates that will still need to
+-- be checked. The new newStates will then be added to reachableStates.
 unreachableStates' :: DFA -> Set.Set Int -> Set.Set Int -> Set.Set Int
 unreachableStates' dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} reachableStates newStates
   | null newStates = Set.difference dStates reachableStates
