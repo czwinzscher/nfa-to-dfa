@@ -59,7 +59,7 @@ unreachableStates dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} =
 
 unreachableStates' :: DFA -> Set.Set Int -> Set.Set Int -> Set.Set Int
 unreachableStates' dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} reachableStates newStates
-  | Set.size newStates == 0 = Set.difference dStates reachableStates
+  | null newStates = Set.difference dStates reachableStates
   | otherwise =
     let temp =
           Set.foldr
