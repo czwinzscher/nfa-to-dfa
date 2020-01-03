@@ -9,7 +9,7 @@ module NfaToDfa
 
 import Data.Bifunctor (bimap)
 import qualified Data.Map.Strict as Map
-import Data.Maybe (fromJust)
+import Data.Maybe (fromMaybe)
 import qualified Data.Set as Set
 import NfaToDfa.Internal
 
@@ -67,10 +67,13 @@ unreachableStates' dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} reachabl
                Set.union
                  (Set.foldr
                     (\c ->
-                       Set.insert
-                         -- TODO remove fromJust
-                         (fromJust $
-                          Map.lookup s (fromJust $ Map.lookup c dDelta)))
+                       Set.union
+                         (maybe
+                            Set.empty
+                            Set.singleton
+                            (Map.lookup
+                               s
+                               (fromMaybe Map.empty (Map.lookup c dDelta)))))
                     Set.empty
                     dAlphabet))
             Set.empty
