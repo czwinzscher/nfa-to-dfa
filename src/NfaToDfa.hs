@@ -77,24 +77,18 @@ unreachableStates' :: DFA -> Set.Set Int -> Set.Set Int -> Set.Set Int
 unreachableStates' dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} reachableStates newStates
   | null newStates = Set.difference dStates reachableStates
   | otherwise =
-    let temp =
+    let nextForState s =
           Set.foldr
-            (\s ->
+            (\c ->
                Set.union
-                 (Set.foldr
-                    (\c ->
-                       Set.union
-                         (maybe
-                            Set.empty
-                            Set.singleton
-                            (Map.lookup
-                               s
-                               (fromMaybe Map.empty (Map.lookup c dDelta)))))
+                 (maybe
                     Set.empty
-                    dAlphabet))
+                    Set.singleton
+                    (Map.lookup s (fromMaybe Map.empty (Map.lookup c dDelta)))))
             Set.empty
-            newStates
-        newNewStates = Set.difference temp reachableStates
+            dAlphabet
+        next = Set.foldr (Set.union . nextForState) Set.empty newStates
+        newNewStates = Set.difference next reachableStates
         newReachableStates = Set.union reachableStates newNewStates
      in unreachableStates' dfa newReachableStates newNewStates
 
