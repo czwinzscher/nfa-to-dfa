@@ -1,12 +1,14 @@
-module NfaToDfa.Internal
-  ( dfaDeltaForCharAndState
-  , dfaDeltaForChar
-  , dfaDelta
+{-# LANGUAGE NamedFieldPuns #-}
+
+module NfaToDfa.Convert
+  ( nfaToDfa
   ) where
 
+import Data.Bifunctor (bimap)
 import qualified Data.Map.Strict as Map
 import Data.Maybe (fromMaybe)
 import qualified Data.Set as Set
+import NfaToDfa.Types
 
 dfaDeltaForCharAndState ::
      Map.Map Int (Set.Set Int) -- ^ The transition map for the char in the NFA
@@ -43,3 +45,24 @@ dfaDelta nfaMap alphabet newStates = Map.fromList res
              ])
         []
         alphabet
+
+-- | The 'nfaToDfa' function converts a NFA to a DFA using the powerset
+-- construction.
+nfaToDfa :: NFA -> DFA
+nfaToDfa NFA {nStates, nAlphabet, nDelta, nStart, nFinal} =
+  let newStates = Set.powerSet nStates
+      renameState s = Set.findIndex s newStates
+   in DFA
+        { dStates = Set.map renameState newStates
+        , dAlphabet = nAlphabet
+        , dDelta =
+            Map.map
+              (Map.fromList . map (bimap renameState renameState) . Map.toList)
+              (dfaDelta nDelta nAlphabet newStates)
+        , dStart = renameState nStart
+        , dFinal =
+            Set.map
+              renameState
+              (Set.fromList
+                 [x | x <- Set.toList newStates, not $ Set.disjoint nFinal x])
+        }

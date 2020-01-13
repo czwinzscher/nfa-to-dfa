@@ -2,7 +2,6 @@ import Test.Tasty
 import Test.Tasty.HUnit
 
 import NfaToDfa
-import NfaToDfa.Internal
 
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
