@@ -40,6 +40,8 @@ executables:
     - nfa-to-dfa
     - aeson
     - bytestring
+    - directory
+    - extra
 
 tests:
   nfa-to-dfa-test:
