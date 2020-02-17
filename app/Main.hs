@@ -1,20 +1,20 @@
 {-# LANGUAGE OverloadedLists #-}
+{-# LANGUAGE LambdaCase #-}
 
 module Main where
 
-import qualified Data.Map.Strict as Map
-import qualified Data.Set as Set
+import Data.Aeson (eitherDecode)
+import qualified Data.ByteString.Lazy as B
 import NfaToDfa
+import System.Environment (getArgs)
+import System.Exit (exitFailure)
+
+nfaFromJSONFile :: String -> IO (Either String NFA)
+nfaFromJSONFile filename = B.readFile filename >>= return . eitherDecode
 
 main :: IO ()
 main = do
-  let nfa =
-        NFA
-          { nStates = [0, 1, 2]
-          , nAlphabet = ['a', 'b']
-          , nDelta = [('a', [(0, [1, 2]), (1, [2])]), ('b', [(1, [1, 2])])]
-          , nStart = [0]
-          , nFinal = [2]
-          }
-  let dfa = removeUnreachable $ nfaToDfa nfa
-  print dfa
+  [filename] <- getArgs
+  nfaFromJSONFile filename >>= \case
+    Left errorStr -> putStrLn ("Error: " ++ errorStr) >> exitFailure
+    Right nfa -> print $ removeUnreachable (nfaToDfa nfa)
