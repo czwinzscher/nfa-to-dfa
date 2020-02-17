@@ -1,4 +1,4 @@
-{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module NfaToDfa.Minimize
   ( unreachableStates
@@ -13,7 +13,7 @@ import NfaToDfa.Types
 -- | The 'unreachableStates' function takes a DFA and returns a Set
 -- containing all unreachable states in the DFA.
 unreachableStates :: DFA -> Set.Set Int
-unreachableStates dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} =
+unreachableStates dfa@DFA {..} =
   unreachableStates' dfa (Set.singleton dStart) (Set.singleton dStart)
 
 -- | The 'unreachableStates'' function takes a DFA, a Set of states that
@@ -30,7 +30,7 @@ unreachableStates dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} =
 -- states minus reachableStates are the new newStates that will still need to
 -- be checked. The new newStates will then be added to reachableStates.
 unreachableStates' :: DFA -> Set.Set Int -> Set.Set Int -> Set.Set Int
-unreachableStates' dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} reachableStates newStates
+unreachableStates' dfa@DFA {..} reachableStates newStates
   | null newStates = Set.difference dStates reachableStates
   | otherwise =
     let nextForState s =
@@ -51,7 +51,7 @@ unreachableStates' dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} reachabl
 -- | The 'removeUnreachable' function takes a DFA and returns an equivalent DFA
 -- with all unreachable states removed.
 removeUnreachable :: DFA -> DFA
-removeUnreachable dfa@DFA {dStates, dAlphabet, dDelta, dStart, dFinal} =
+removeUnreachable dfa@DFA {..} =
   let unreachable = unreachableStates dfa
    in DFA
         { dStates = Set.difference dStates unreachable

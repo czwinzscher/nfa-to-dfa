@@ -1,10 +1,9 @@
-{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module NfaToDfa.Convert
   ( nfaToDfa
   ) where
 
-import Data.Bifunctor (bimap)
 import qualified Data.Map.Strict as Map
 import Data.Maybe (fromMaybe)
 import qualified Data.Set as Set
@@ -13,7 +12,7 @@ import NfaToDfa.Types
 -- | The 'nfaToDfa' function converts a NFA to a DFA using the powerset
 -- construction.
 nfaToDfa :: NFA -> DFA
-nfaToDfa nfa@NFA {nStates, nAlphabet, nDelta, nStart, nFinal} =
+nfaToDfa NFA {..} =
   let newStates = Set.powerSet nStates
       renameState s = Set.findIndex s newStates
       dfaDeltaForCharAndState nfaCharMap =
