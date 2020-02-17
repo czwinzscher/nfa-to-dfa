@@ -1,10 +1,14 @@
+{-# LANGUAGE DeriveGeneric #-}
+
 module NfaToDfa.Types
   ( NFA(..)
   , DFA(..)
   ) where
 
+import Data.Aeson
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
+import GHC.Generics
 
 data NFA =
   NFA
@@ -14,7 +18,11 @@ data NFA =
     , nStart :: Set.Set Int
     , nFinal :: Set.Set Int
     }
-  deriving (Show, Eq)
+  deriving (Show, Eq, Generic)
+
+instance FromJSON NFA
+
+instance ToJSON NFA
 
 data DFA =
   DFA
@@ -24,4 +32,8 @@ data DFA =
     , dStart :: Int
     , dFinal :: Set.Set Int
     }
-  deriving (Show, Eq)
+  deriving (Show, Eq, Generic)
+
+instance FromJSON DFA
+
+instance ToJSON DFA
