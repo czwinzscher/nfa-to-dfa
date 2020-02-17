@@ -19,8 +19,14 @@ dependencies:
 - base >= 4.7 && < 5
 - containers
 
+ghc-options:
+  - -Wall
+  - -O2
+
 library:
   source-dirs: src
+  dependencies:
+    - aeson
 
 executables:
   nfa-to-dfa-exe:
@@ -32,6 +38,8 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - nfa-to-dfa
+    - aeson
+    - bytestring
 
 tests:
   nfa-to-dfa-test:
