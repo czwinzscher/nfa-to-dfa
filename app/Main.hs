@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedLists #-}
+
 module Main where
 
 import qualified Data.Map.Strict as Map
@@ -8,17 +10,11 @@ main :: IO ()
 main = do
   let nfa =
         NFA
-          { nStates = Set.fromList [0, 1, 2]
-          , nAlphabet = Set.fromList ['a', 'b']
-          , nDelta =
-              Map.fromList
-                [ ( 'a'
-                  , Map.fromList
-                      [(0, Set.fromList [1, 2]), (1, Set.fromList [2])])
-                , ('b', Map.fromList [(1, Set.fromList [1, 2])])
-                ]
-          , nStart = Set.fromList [0]
-          , nFinal = Set.fromList [2]
+          { nStates = [0, 1, 2]
+          , nAlphabet = ['a', 'b']
+          , nDelta = [('a', [(0, [1, 2]), (1, [2])]), ('b', [(1, [1, 2])])]
+          , nStart = [0]
+          , nFinal = [2]
           }
   let dfa = removeUnreachable $ nfaToDfa nfa
   print dfa
