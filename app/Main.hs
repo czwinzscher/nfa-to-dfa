@@ -11,8 +11,8 @@ import System.Exit (exitFailure)
 
 nfaFromJSONFile :: String -> IO (Either String NFA)
 nfaFromJSONFile filename =
-  (try $ B.readFile filename) >>= \case
-    Left err -> return $ Left (show (err :: SomeException))
+  try (B.readFile filename) >>= \case
+    Left err -> return $ Left (show (err :: IOException))
     Right content -> return $ eitherDecode content
 
 main :: IO ()
