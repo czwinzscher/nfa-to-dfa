@@ -1,4 +1,5 @@
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Main where
 
@@ -11,8 +12,8 @@ import System.Exit (exitFailure)
 
 nfaFromJSONFile :: String -> IO (Either String NFA)
 nfaFromJSONFile filename =
-  (eitherDecode <$> B.readFile filename) `catch` \e ->
-    return $ Left (show (e :: IOException))
+  (eitherDecode <$> B.readFile filename) `catch` \(e :: IOException) ->
+    return $ Left (show e)
 
 main :: IO ()
 main =
