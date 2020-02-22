@@ -40,6 +40,7 @@ executables:
     - nfa-to-dfa
     - aeson
     - bytestring
+    - optparse-applicative
 
 tests:
   nfa-to-dfa-test:
