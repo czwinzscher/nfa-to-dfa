@@ -4,7 +4,8 @@
 module Main where
 
 import Control.Exception
-import Data.Aeson (eitherDecode, encode)
+import Data.Aeson (eitherDecode)
+import Data.Aeson.Encode.Pretty (encodePretty)
 import qualified Data.ByteString.Lazy as B
 import qualified Data.ByteString.Lazy.Char8 as BC
 import NfaToDfa
@@ -37,7 +38,7 @@ run (Opts f j) =
     Right nfa -> do
       let res = removeUnreachable (nfaToDfa nfa)
       if j
-        then BC.putStrLn $ encode res
+        then BC.putStrLn $ encodePretty res
         else print res
 
 infoStr :: ParserInfo Opts
