@@ -29,7 +29,7 @@ library:
     - aeson
 
 executables:
-  nfa-to-dfa-exe:
+  nfa-to-dfa:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
