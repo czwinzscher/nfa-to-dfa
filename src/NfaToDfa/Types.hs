@@ -36,4 +36,5 @@ data DFA =
 
 instance FromJSON DFA
 
-instance ToJSON DFA
+instance ToJSON DFA where
+    toEncoding = genericToEncoding defaultOptions
