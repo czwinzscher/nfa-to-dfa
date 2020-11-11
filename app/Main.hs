@@ -1,4 +1,3 @@
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Main where
@@ -33,20 +32,21 @@ optsParser =
               )
             <|> flag' StdInput (long "stdin" <> help "read from stdin")
         )
-    <*> ( flag' JsonOutput (long "output-json" <> help "output the DFA in JSON-Format")
-            <|> flag' TextOutput (long "output-text" <> help "output the DFA in Text-Format")
+    <*> ( flag'
+            JsonOutput
+            (long "output-json" <> help "output the DFA in JSON-Format")
+            <|> flag'
+              TextOutput
+              (long "output-text" <> help "output the DFA in Text-Format")
         )
-    <*> ( optional $
-            strOption
-              ( long "output-file"
-                  <> short 'o'
-                  <> metavar "FILENAME"
-                  <> help "output file"
-              )
-        )
-
-nfaFromJSONFile :: B.ByteString -> Either String NFA
-nfaFromJSONFile json = eitherDecode json
+    <*> optional
+      ( strOption
+          ( long "output-file"
+              <> short 'o'
+              <> metavar "FILENAME"
+              <> help "output file"
+          )
+      )
 
 infoStr :: ParserInfo Opts
 infoStr =
