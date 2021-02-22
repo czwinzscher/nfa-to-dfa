@@ -1,9 +1,10 @@
 {-# LANGUAGE RecordWildCards #-}
 
 module NfaToDfa.Minimize
-  ( unreachableStates
-  , removeUnreachable
-  ) where
+  ( unreachableStates,
+    removeUnreachable,
+  )
+where
 
 import qualified Data.Map.Strict as Map
 import Data.Maybe (fromMaybe)
@@ -35,12 +36,14 @@ unreachableStates' dfa@DFA {..} reachableStates newStates
   | otherwise =
     let nextForState s =
           Set.foldr
-            (\c ->
-               Set.union
-                 (maybe
-                    Set.empty
-                    Set.singleton
-                    (Map.lookup s (fromMaybe Map.empty (Map.lookup c dDelta)))))
+            ( \c ->
+                Set.union
+                  ( maybe
+                      Set.empty
+                      Set.singleton
+                      (Map.lookup s (fromMaybe Map.empty (Map.lookup c dDelta)))
+                  )
+            )
             Set.empty
             dAlphabet
         next = Set.foldr (Set.union . nextForState) Set.empty newStates
@@ -54,13 +57,15 @@ removeUnreachable :: DFA -> DFA
 removeUnreachable dfa@DFA {..} =
   let unreachable = unreachableStates dfa
    in DFA
-        { dStates = Set.difference dStates unreachable
-        , dAlphabet = dAlphabet
-        , dDelta = Map.map (`Map.withoutKeys` unreachable) dDelta
-        , dStart = dStart
-        , dFinal = Set.difference dFinal unreachable
+        { dStates = Set.difference dStates unreachable,
+          dAlphabet = dAlphabet,
+          dDelta = Map.map (`Map.withoutKeys` unreachable) dDelta,
+          dStart = dStart,
+          dFinal = Set.difference dFinal unreachable
         }
+
 -- nondistinguishableStates :: DFA -> Set.Set Int
+
 -- | The 'minimize' function takes a DFA and returns an equivalent DFA
 --   with the minimum number of states
 -- minimize :: DFA -> DFA

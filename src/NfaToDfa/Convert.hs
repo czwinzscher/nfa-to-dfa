@@ -1,8 +1,9 @@
 {-# LANGUAGE RecordWildCards #-}
 
 module NfaToDfa.Convert
-  ( nfaToDfa
-  ) where
+  ( nfaToDfa,
+  )
+where
 
 import qualified Data.Map.Strict as Map
 import Data.Maybe (fromMaybe)
@@ -21,29 +22,33 @@ nfaToDfa NFA {..} =
           Set.empty
       dfaDeltaForChar nfaCharMap =
         Set.foldr
-          (\x ->
-             Map.insert
-               (renameState x)
-               (renameState (dfaDeltaForCharAndState nfaCharMap x)))
+          ( \x ->
+              Map.insert
+                (renameState x)
+                (renameState (dfaDeltaForCharAndState nfaCharMap x))
+          )
           Map.empty
       dfaDelta =
         Set.foldr
-          (\a ->
-             Map.insert
-               a
-               (dfaDeltaForChar
-                  (fromMaybe Map.empty (Map.lookup a nDelta))
-                  newStates))
+          ( \a ->
+              Map.insert
+                a
+                ( dfaDeltaForChar
+                    (fromMaybe Map.empty (Map.lookup a nDelta))
+                    newStates
+                )
+          )
           Map.empty
           nAlphabet
    in DFA
-        { dStates = Set.map renameState newStates
-        , dAlphabet = nAlphabet
-        , dDelta = dfaDelta
-        , dStart = renameState nStart
-        , dFinal =
+        { dStates = Set.map renameState newStates,
+          dAlphabet = nAlphabet,
+          dDelta = dfaDelta,
+          dStart = renameState nStart,
+          dFinal =
             Set.map
               renameState
-              (Set.fromList
-                 [x | x <- Set.toList newStates, not $ Set.disjoint nFinal x])
+              ( Set.fromList
+                  [x | x <- Set.toList newStates, not $ Set.disjoint nFinal x]
+              )
         }
