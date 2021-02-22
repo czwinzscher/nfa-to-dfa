@@ -9,8 +9,20 @@ on:
       - '*.md'
 
 jobs:
+  ormolu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: mrkkrp/ormolu-action@v1
+        with:
+          pattern: |
+            app/**/*.hs
+            src/**/*.hs
+            test/**/*.hs
+
   stack:
-    name: stack latest
+    needs: ormolu
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
