@@ -8,23 +8,26 @@ copyright:           "2019 Clemens Zwinzscher"
 extra-source-files:
 - README.md
 
-# Metadata used when publishing your package
-# synopsis:            Short description of your package
-# category:            Web
-
 description:         Please see the README on GitHub at <https://github.com/czwinzscher/nfa-to-dfa#readme>
 
 dependencies:
-- base >= 4.7 && < 5
-- containers
+- base
 
 ghc-options:
   - -Wall
+  - -Wincomplete-uni-patterns
+  - -Wincomplete-record-updates
+  - -Widentities
+  - -Wredundant-constraints
+  - -Wpartial-fields
+  - -Wcompat
+  - -Wunused-packages
 
 library:
   source-dirs: src
   dependencies:
     - aeson
+    - containers
 
 executables:
   nfa-to-dfa:
@@ -34,7 +37,6 @@ executables:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
-    - -O2
     dependencies:
     - nfa-to-dfa
     - aeson
@@ -52,5 +54,6 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - nfa-to-dfa
+    - containers
     - tasty
     - tasty-hunit
