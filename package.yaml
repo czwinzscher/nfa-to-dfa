@@ -40,7 +40,6 @@ executables:
     dependencies:
     - nfa-to-dfa
     - aeson
-    - aeson-pretty
     - bytestring
     - optparse-applicative
 

@@ -2,8 +2,7 @@
 
 module Main where
 
-import Data.Aeson (eitherDecode)
-import Data.Aeson.Encode.Pretty (encodePretty)
+import Data.Aeson (eitherDecode, encode)
 import qualified Data.ByteString.Lazy as B
 import qualified Data.ByteString.Lazy.Char8 as BC
 import NfaToDfa
@@ -67,7 +66,7 @@ run (Opts inSource outFormat outFile) = do
     Right nfa ->
       let dfa = removeUnreachable $ nfaToDfa nfa
           res = case outFormat of
-            JsonOutput -> encodePretty dfa
+            JsonOutput -> encode dfa
             TextOutput -> BC.pack $ show dfa
           outputFunc = case outFile of
             Just f -> BC.writeFile f
