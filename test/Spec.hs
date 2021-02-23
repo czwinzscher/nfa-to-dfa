@@ -22,37 +22,37 @@ conversionUnitTests =
     [ testCase "empty nfa" $ do
         let nfa =
               NFA
-                { nStates = Set.empty,
-                  nAlphabet = Set.empty,
-                  nDelta = Map.empty,
-                  nStart = Set.empty,
-                  nFinal = Set.empty
+                { nfaStates = Set.empty,
+                  nfaAlphabet = Set.empty,
+                  nfaDelta = Map.empty,
+                  nfaStart = Set.empty,
+                  nfaFinal = Set.empty
                 }
             expected =
               DFA
-                { dStates = [0],
-                  dAlphabet = Set.empty,
-                  dDelta = Map.empty,
-                  dStart = 0,
-                  dFinal = Set.empty
+                { dfaStates = [0],
+                  dfaAlphabet = Set.empty,
+                  dfaDelta = Map.empty,
+                  dfaStart = 0,
+                  dfaFinal = Set.empty
                 }
             actual = nfaToDfa nfa
         expected @?= actual,
       testCase "nfa with 3 states" $ do
         let nfa =
               NFA
-                { nStates = [0, 1, 2],
-                  nAlphabet = ['a', 'b'],
-                  nDelta =
+                { nfaStates = [0, 1, 2],
+                  nfaAlphabet = ['a', 'b'],
+                  nfaDelta =
                     [('a', [(0, [1, 2]), (1, [2])]), ('b', [(1, [1, 2])])],
-                  nStart = [0],
-                  nFinal = [2]
+                  nfaStart = [0],
+                  nfaFinal = [2]
                 }
             expected =
               DFA
-                { dStates = [0 .. 7],
-                  dAlphabet = ['a', 'b'],
-                  dDelta =
+                { dfaStates = [0 .. 7],
+                  dfaAlphabet = ['a', 'b'],
+                  dfaDelta =
                     [ ( 'a',
                         [ (0, 0),
                           (1, 6),
@@ -76,8 +76,8 @@ conversionUnitTests =
                         ]
                       )
                     ],
-                  dStart = 1,
-                  dFinal = [3, 4, 6, 7]
+                  dfaStart = 1,
+                  dfaFinal = [3, 4, 6, 7]
                 }
             actual = nfaToDfa nfa
         expected @?= actual
@@ -90,9 +90,9 @@ minimizationUnitTests =
     [ testCase "remove unreachable states" $ do
         let dfa =
               DFA
-                { dStates = [0 .. 7],
-                  dAlphabet = ['a', 'b'],
-                  dDelta =
+                { dfaStates = [0 .. 7],
+                  dfaAlphabet = ['a', 'b'],
+                  dfaDelta =
                     [ ( 'a',
                         [ (0, 0),
                           (1, 6),
@@ -116,19 +116,19 @@ minimizationUnitTests =
                         ]
                       )
                     ],
-                  dStart = 1,
-                  dFinal = [3, 4, 6, 7]
+                  dfaStart = 1,
+                  dfaFinal = [3, 4, 6, 7]
                 }
             expected =
               DFA
-                { dStates = [0, 1, 6, 7],
-                  dAlphabet = ['a', 'b'],
-                  dDelta =
+                { dfaStates = [0, 1, 6, 7],
+                  dfaAlphabet = ['a', 'b'],
+                  dfaDelta =
                     [ ('a', [(0, 0), (1, 6), (6, 7), (7, 0)]),
                       ('b', [(0, 0), (1, 0), (6, 6), (7, 0)])
                     ],
-                  dStart = 1,
-                  dFinal = [6, 7]
+                  dfaStart = 1,
+                  dfaFinal = [6, 7]
                 }
             actual = removeUnreachable dfa
         expected @?= actual

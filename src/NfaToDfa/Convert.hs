@@ -14,7 +14,7 @@ import NfaToDfa.Types
 -- construction.
 nfaToDfa :: NFA -> DFA
 nfaToDfa NFA {..} =
-  let newStates = Set.powerSet nStates
+  let newStates = Set.powerSet nfaStates
       renameState s = Set.findIndex s newStates
       dfaDeltaForCharAndState nfaCharMap =
         Set.foldr
@@ -34,21 +34,21 @@ nfaToDfa NFA {..} =
               Map.insert
                 a
                 ( dfaDeltaForChar
-                    (fromMaybe Map.empty (Map.lookup a nDelta))
+                    (fromMaybe Map.empty (Map.lookup a nfaDelta))
                     newStates
                 )
           )
           Map.empty
-          nAlphabet
+          nfaAlphabet
    in DFA
-        { dStates = Set.map renameState newStates,
-          dAlphabet = nAlphabet,
-          dDelta = dfaDelta,
-          dStart = renameState nStart,
-          dFinal =
+        { dfaStates = Set.map renameState newStates,
+          dfaAlphabet = nfaAlphabet,
+          dfaDelta = dfaDelta,
+          dfaStart = renameState nfaStart,
+          dfaFinal =
             Set.map
               renameState
               ( Set.fromList
-                  [x | x <- Set.toList newStates, not $ Set.disjoint nFinal x]
+                  [x | x <- Set.toList newStates, not $ Set.disjoint nfaFinal x]
               )
         }

@@ -15,7 +15,7 @@ import NfaToDfa.Types
 -- containing all unreachable states in the DFA.
 unreachableStates :: DFA -> Set.Set Int
 unreachableStates dfa@DFA {..} =
-  unreachableStates' dfa (Set.singleton dStart) (Set.singleton dStart)
+  unreachableStates' dfa (Set.singleton dfaStart) (Set.singleton dfaStart)
 
 -- | The 'unreachableStates'' function takes a DFA, a Set of states that
 -- are known to be reachable and a Set of states that are known to be
@@ -32,7 +32,7 @@ unreachableStates dfa@DFA {..} =
 -- be checked. The new newStates will then be added to reachableStates.
 unreachableStates' :: DFA -> Set.Set Int -> Set.Set Int -> Set.Set Int
 unreachableStates' dfa@DFA {..} reachableStates newStates
-  | null newStates = Set.difference dStates reachableStates
+  | null newStates = Set.difference dfaStates reachableStates
   | otherwise =
     let nextForState s =
           Set.foldr
@@ -41,11 +41,11 @@ unreachableStates' dfa@DFA {..} reachableStates newStates
                   ( maybe
                       Set.empty
                       Set.singleton
-                      (Map.lookup s (fromMaybe Map.empty (Map.lookup c dDelta)))
+                      (Map.lookup s (fromMaybe Map.empty (Map.lookup c dfaDelta)))
                   )
             )
             Set.empty
-            dAlphabet
+            dfaAlphabet
         next = Set.foldr (Set.union . nextForState) Set.empty newStates
         newNewStates = Set.difference next reachableStates
         newReachableStates = Set.union reachableStates newNewStates
@@ -57,11 +57,11 @@ removeUnreachable :: DFA -> DFA
 removeUnreachable dfa@DFA {..} =
   let unreachable = unreachableStates dfa
    in DFA
-        { dStates = Set.difference dStates unreachable,
-          dAlphabet = dAlphabet,
-          dDelta = Map.map (`Map.withoutKeys` unreachable) dDelta,
-          dStart = dStart,
-          dFinal = Set.difference dFinal unreachable
+        { dfaStates = Set.difference dfaStates unreachable,
+          dfaAlphabet = dfaAlphabet,
+          dfaDelta = Map.map (`Map.withoutKeys` unreachable) dfaDelta,
+          dfaStart = dfaStart,
+          dfaFinal = Set.difference dfaFinal unreachable
         }
 
 -- nondistinguishableStates :: DFA -> Set.Set Int

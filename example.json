@@ -1,7 +1,7 @@
 {
-    "nStates": [0, 1, 2],
-    "nAlphabet": "ab",
-    "nDelta": {
+    "states": [0, 1, 2],
+    "alphabet": "ab",
+    "delta": {
         "a": {
             "0": [1, 2],
             "1": [2]
@@ -10,6 +10,6 @@
             "1": [1, 2]
         }
     },
-    "nStart": [0],
-    "nFinal": [2]
+    "start": [0],
+    "final": [2]
 }

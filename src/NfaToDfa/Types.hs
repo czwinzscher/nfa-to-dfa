@@ -7,33 +7,35 @@ module NfaToDfa.Types
 where
 
 import Data.Aeson
+import Data.Aeson.Casing
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 import GHC.Generics
 
+aesonOptions :: Options
+aesonOptions = aesonPrefix snakeCase
+
 data NFA = NFA
-  { nStates :: Set.Set Int,
-    nAlphabet :: Set.Set Char,
-    nDelta :: Map.Map Char (Map.Map Int (Set.Set Int)),
-    nStart :: Set.Set Int,
-    nFinal :: Set.Set Int
+  { nfaStates :: Set.Set Int,
+    nfaAlphabet :: Set.Set Char,
+    nfaDelta :: Map.Map Char (Map.Map Int (Set.Set Int)),
+    nfaStart :: Set.Set Int,
+    nfaFinal :: Set.Set Int
   }
   deriving (Show, Eq, Generic)
 
-instance FromJSON NFA
-
-instance ToJSON NFA
+instance FromJSON NFA where
+  parseJSON = genericParseJSON aesonOptions
 
 data DFA = DFA
-  { dStates :: Set.Set Int,
-    dAlphabet :: Set.Set Char,
-    dDelta :: Map.Map Char (Map.Map Int Int),
-    dStart :: Int,
-    dFinal :: Set.Set Int
+  { dfaStates :: Set.Set Int,
+    dfaAlphabet :: Set.Set Char,
+    dfaDelta :: Map.Map Char (Map.Map Int Int),
+    dfaStart :: Int,
+    dfaFinal :: Set.Set Int
   }
   deriving (Show, Eq, Generic)
 
-instance FromJSON DFA
-
 instance ToJSON DFA where
-  toEncoding = genericToEncoding defaultOptions
+  toJSON = genericToJSON aesonOptions
+  toEncoding = genericToEncoding aesonOptions

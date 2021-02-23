@@ -27,6 +27,7 @@ library:
   source-dirs: src
   dependencies:
     - aeson
+    - aeson-casing
     - containers
 
 executables:
