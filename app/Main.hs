@@ -12,7 +12,7 @@ import System.Exit (exitFailure)
 
 data Input = FileInput FilePath | StdInput
 
-data Output = JsonOutput | TextOutput | DotOutput
+data Output = JsonOutput | DotOutput
 
 data Opts = Opts
   { inputSource :: Input,
@@ -35,9 +35,6 @@ optsParser =
     <*> ( flag'
             JsonOutput
             (long "output-json" <> help "output the DFA in JSON-Format")
-            <|> flag'
-              TextOutput
-              (long "output-text" <> help "output the DFA in Text-Format")
             <|> flag'
               DotOutput
               (long "output-dot" <> help "output the DFA in Dot-Format")
@@ -71,7 +68,6 @@ run (Opts inSource outFormat outFile) = do
       let dfa = removeUnreachable $ nfaToDfa nfa
           res = case outFormat of
             JsonOutput -> encode dfa
-            TextOutput -> BC.pack $ show dfa
             DotOutput -> LT.encodeUtf8 $ toDot dfa
           outputFunc = case outFile of
             Just f -> BC.writeFile f
