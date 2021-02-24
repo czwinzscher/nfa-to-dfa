@@ -28,7 +28,9 @@ library:
   dependencies:
     - aeson
     - aeson-casing
+    - dot
     - containers
+    - text
 
 executables:
   nfa-to-dfa:
@@ -43,6 +45,7 @@ executables:
     - aeson
     - bytestring
     - optparse-applicative
+    - text
 
 tests:
   nfa-to-dfa-test:

@@ -5,13 +5,14 @@ module Main where
 import Data.Aeson (eitherDecode, encode)
 import qualified Data.ByteString.Lazy as B
 import qualified Data.ByteString.Lazy.Char8 as BC
+import qualified Data.Text.Lazy.Encoding as LT (encodeUtf8)
 import NfaToDfa
 import Options.Applicative
 import System.Exit (exitFailure)
 
 data Input = FileInput FilePath | StdInput
 
-data Output = JsonOutput | TextOutput
+data Output = JsonOutput | TextOutput | DotOutput
 
 data Opts = Opts
   { inputSource :: Input,
@@ -37,6 +38,9 @@ optsParser =
             <|> flag'
               TextOutput
               (long "output-text" <> help "output the DFA in Text-Format")
+            <|> flag'
+              DotOutput
+              (long "output-dot" <> help "output the DFA in Dot-Format")
         )
     <*> optional
       ( strOption
@@ -68,6 +72,7 @@ run (Opts inSource outFormat outFile) = do
           res = case outFormat of
             JsonOutput -> encode dfa
             TextOutput -> BC.pack $ show dfa
+            DotOutput -> LT.encodeUtf8 $ toDot dfa
           outputFunc = case outFile of
             Just f -> BC.writeFile f
             Nothing -> BC.putStrLn
